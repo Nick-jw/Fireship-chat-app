@@ -12,7 +12,8 @@ import { useAuthState } from 'react-firebase-hooks/auth';
 function MyApp({ Component, pageProps }) {
 
   const [user] = useAuthState(auth)
-  const [username, setUsername] = useState(null)
+  const [username, setUsername] = useState("jeff")
+  console.log(`In _app.js username is ${username}`)
 
   useEffect(() => {
     let unsubscribe;
@@ -26,6 +27,7 @@ function MyApp({ Component, pageProps }) {
     } else {
       setUsername(null);
     }
+    console.log(`In _app.js useEffect username is ${username}`)
 
     return unsubscribe;
   }, [user])
