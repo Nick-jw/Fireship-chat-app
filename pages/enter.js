@@ -1,6 +1,6 @@
 import { auth, googleAuthProvider, firestore } from '../lib/firebase';
 import { signInWithPopup, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, writeBatch } from 'firebase/firestore';
 
 import { useContext, useEffect, useState, useCallback } from 'react';
 import { UserContext } from '../lib/context';
@@ -70,10 +70,11 @@ function UsernameForm() {
     const checkUsername = useCallback(
         debounce(async (username) => {
             if (username.length >= 3) {
-                const ref = doc(firestore, `username/${username}`)
+                const ref = doc(firestore, `usernames/${username}`)
                 const snap = await getDoc(ref)
                 console.log("Firestore read executed!")
                 const docExists = snap.exists();
+                console.log(`Document for name ${username} exists: ${docExists}`)
                 setIsValid(!docExists);
                 setIsLoading(false);
             }
@@ -81,7 +82,17 @@ function UsernameForm() {
     []
     );
 
-    const onSubmit = e => {
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        const userDoc = doc(firestore, `users`, user.uid);
+        const usernameDoc = doc(firestore, 'usernames', formValue);
+
+        const batch = writeBatch(firestore);
+        batch.set(userDoc, { username: formValue, photoURL: user.photoURL, displayName: user.displayName });
+        batch.set(usernameDoc, { uid: user.uid })
+
+        await batch.commit();
+
 
     }
 
@@ -94,7 +105,9 @@ function UsernameForm() {
                 <form onSubmit={onSubmit}>
                     <input name="username" placeholder='username' value={formValue} onChange={onChange} />
 
-                    <button type="submit" className="btn-green" disabled={!isValid}></button>
+                    <UsernameMessage username={formValue} isValid={isValid} loading={isLoading} />
+
+                    <button type="submit" className="btn-green" disabled={!isValid}>Choose</button>
 
                     <h3>Debug State</h3>
                     <div>
@@ -108,4 +121,16 @@ function UsernameForm() {
             </section>
         )
     )
+}
+
+function UsernameMessage({ username, isValid, loading }) {
+    if (loading) {
+        return <p>Checking...</p>
+    } else if (isValid) {
+        return <p className="text-success">{username} is available!</p>
+    } else if (username && !isValid) {
+        return <p className="text-danger">That username is taken!</p>
+    } else {
+        return <p></p>
+    }
 }
