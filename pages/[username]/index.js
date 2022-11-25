@@ -1,19 +1,24 @@
 import UserProfile from '../../components/UserProfile';
 import PostFeed from '../../components/PostFeed';
-import { query, doc } from 'firebase/firestore'
+import { query as fireQuery, collection, where, orderBy, limit, getDocs } from 'firebase/firestore';
+import { getUserWithUsername, firestore, postToJSON } from '../../lib/firebase';
+
 
 export async function getServerSideProps({ query }) {
     const { username } = query;
 
-    const userDoc = await getUserWithUsername(username);
+    const { userDoc } = await getUserWithUsername(username);
 
     let user = null;
     let posts = null;
 
     if (userDoc) {
-        user = userDoc.data();
-        userDocRef = doc(firestore, )
-        // 4:05 in video, turn v8 into v9 code
+        user = userDoc.data(); // user data object to be passed as props (needed to render <UserProfile />)
+
+        const uid = userDoc.id; // user uid needed to query a user's posts 
+                                // here collection() with uid is replacing document.ref from v8 SDK
+        const postQuery = fireQuery(collection(firestore, 'users', uid, 'posts'), where('published', '==', true), orderBy('createdAt', 'desc'), limit(5));
+        posts = (await getDocs(postQuery)).docs.map(postToJSON)
     }
 
 

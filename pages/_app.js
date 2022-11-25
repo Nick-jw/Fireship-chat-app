@@ -13,7 +13,6 @@ function MyApp({ Component, pageProps }) {
 
   const [user] = useAuthState(auth)
   const [username, setUsername] = useState("")
-  console.log(`In _app.js username is ${username}`)
 
   useEffect(() => {
     let unsubscribe;

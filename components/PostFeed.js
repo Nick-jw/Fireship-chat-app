@@ -12,14 +12,12 @@ function PostItem({ post, admin = false }) {
     return (
         <div className="card">
             <Link href={`/${post.username}`}>
-                <a>
                     <strong>By @{post.username}</strong>
-                </a>
             </Link>
 
             <Link href={`/${post.username}/${post.slug}`}>
                 <h2>
-                    <a>{post.title}</a>
+                    <p>{post.title}</p>
                 </h2>
             </Link>
 
@@ -27,7 +25,7 @@ function PostItem({ post, admin = false }) {
                 <span>
                     {wordCount} words. {minutesToRead} min read
                 </span>
-                <span>{post.heartCount} Hearts</span>
+                <span className="push-left"> {post.heartCount} Hearts</span>
             </footer>
 
         </div>
