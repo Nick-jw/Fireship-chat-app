@@ -26,7 +26,6 @@ function MyApp({ Component, pageProps }) {
     } else {
       setUsername(null);
     }
-    console.log(`In _app.js useEffect username is ${username}`)
 
     return unsubscribe;
   }, [user])

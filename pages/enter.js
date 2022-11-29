@@ -9,7 +9,6 @@ import debounce from 'lodash.debounce'
 
 export default function EnterPage(props) {
     const { user, username } = useContext(UserContext);
-    console.log(`In enter.js username is ${username}`)
 
     return (
         <main>
