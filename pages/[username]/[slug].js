@@ -1,4 +1,4 @@
-import PostContent from '../../components/PostContent';
+// import PostContent from '../../components/PostContent';
 import { firestore, getUserWithUsername, postToJSON } from '../../lib/firebase';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { collection, collectionGroup, doc, getDoc, getDocs, query } from 'firebase/firestore';
